@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Search Engine - InfoQuest</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: rgb(99, 163, 162);
+            background-image: url('https://kinsta.com/wp-content/uploads/2019/08/alternative-search-engines.png');
+            background-size: cover;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            flex-direction: column; /* Allow stacking of containers */
+        }
+
+        .container {
+            background-color: rgba(187, 187, 187, 0.6);
+            backdrop-filter: blur(10px);
+            color: white;
+            padding: 20px;
+            border-radius: 5px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            width: 400px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin-bottom: 40px; /* Space between InfoQuest and history */
+        }
+
+        input[type="text"] {
+            width: 100%;
+            padding: 10px;
+            border-radius: 5px;
+            border: 1px solid black;
+            margin-bottom: 20px; /* Margin between search box and buttons */
+        }
+
+        button {
+            padding: 10px 20px;
+            border: 2px solid;
+            border-radius: 5px;
+            background-color: transparent;
+            color: #007bff;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            flex: 1; /* Allow buttons to grow equally */
+        }
+
+        button#searchBtn {
+            border-color: #007bff;
+            color: #007bff;
+        }
+
+        button#searchBtn:hover {
+            background-color: #007bff;
+            color: white;
+        }
+
+        button#clearHistoryBtn {
+            border-color: #dc3545;
+            color: #dc3545;
+        }
+
+        button#clearHistoryBtn:hover {
+            background-color: #dc3545;
+            color: white;
+        }
+
+        /* Search History Block */
+        .history-container {
+            background-color: rgba(255, 255, 255, 0.6); /* Semi-transparent white */
+            backdrop-filter: blur(10px); /* Apply blur effect */
+            padding: 10px;
+            border-radius: 5px;
+            width: 400px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        ul {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        ul li {
+            background-color: #f9f9f9;
+            margin: 5px 0;
+            padding: 10px;
+            border-radius: 5px;
+            box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
+            color: black;
+        }
+
+        /* Align buttons side by side */
+        .buttons {
+            display: flex;
+            justify-content: center;
+            width: 100%;
+            margin-top: 10px;
+        }
+
+        .buttons button {
+            margin: 0 5px; /* Space between buttons */
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>InfoQuest</h1>
+        <input type="text" id="searchInput" placeholder="Enter keyword...">
+        <div class="buttons">
+            <button id="searchBtn">Search</button>
+            <button id="clearHistoryBtn">Clear History</button>
+        </div>
+    </div>
+
+    <div class="history-container">
+        <h2>Search History</h2>
+        <ul id="searchHistory"></ul>
+    </div>
+
+    <script>
+        // Selecting the DOM elements
+        const searchInput = document.getElementById('searchInput');
+        const searchBtn = document.getElementById('searchBtn');
+        const clearHistoryBtn = document.getElementById('clearHistoryBtn');
+        const searchHistoryUl = document.getElementById('searchHistory');
+
+        // Load search history from local storage
+        window.onload = () => {
+            const history = JSON.parse(localStorage.getItem('searchHistory')) || [];
+            displaySearchHistory(history);
+        }
+
+        // Event listener for search button
+        searchBtn.addEventListener('click', (event) => {
+            event.preventDefault();
+            const searchQuery = searchInput.value.trim();
+            if (searchQuery !== "") {
+                addSearchToHistory(searchQuery);
+                searchInput.value = '';
+
+                // Redirect to Google search results
+                window.location.href = `https://www.google.com/search?q=${encodeURIComponent(searchQuery)}`;
+            }
+        });
+
+        // Add search query to history
+        function addSearchToHistory(query) {
+            let history = JSON.parse(localStorage.getItem('searchHistory')) || [];
+            history.push(query);
+            localStorage.setItem('searchHistory', JSON.stringify(history));
+            displaySearchHistory(history);
+        }
+
+        // Display the search history
+        function displaySearchHistory(history) {
+            searchHistoryUl.innerHTML = '';
+            history.forEach(item => {
+                const li = document.createElement('li');
+                li.textContent = item;
+                searchHistoryUl.appendChild(li);
+            });
+        }
+
+        // Clear history event listener
+        clearHistoryBtn.addEventListener('click', () => {
+            localStorage.removeItem('searchHistory');
+            searchHistoryUl.innerHTML = '';
+        });
+    </script>
+</body>
+</html>
